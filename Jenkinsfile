@@ -4,7 +4,7 @@ pipeline {
     tools {
         // IMPORTANTE: Este nombre debe ser EXACTAMENTE el que pusiste en el campo "Name" 
         // dentro de Global Tool Configuration en Jenkins.
-        nodejs 'NodeJS 20.20.0' 
+        nodejs 'Node20' 
     }
     
     environment {
