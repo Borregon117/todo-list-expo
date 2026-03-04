@@ -22,7 +22,7 @@ Sigue estos pasos para descargar y ejecutar el proyecto localmente:
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone <AQUI_IRÁ_TU_URL_DEL_REPOSITORIO>
+    git clone <https://github.com/Borregon117/todo-list-expo.git>
     ```
 
 2.  **Navegar al directorio del proyecto:**
