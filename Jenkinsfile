@@ -39,7 +39,7 @@ pipeline {
                     script {
                         // Asegúrate de que la herramienta se llame así en Global Tool Configuration
                         def scannerHome = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=${SONAR_TOKEN}"
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.token=\$SONAR_TOKEN"
                     }
                 }
             }
