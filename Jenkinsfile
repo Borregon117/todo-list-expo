@@ -13,7 +13,7 @@ pipeline {
         stage('Limpiar e Instalar Dependencias') {
             steps {
                 sh 'rm -rf node_modules package-lock.json'
-                sh 'npm install'
+                sh 'npm install --legacy-peer-deps'
             }
         }
         
