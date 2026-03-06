@@ -2,49 +2,48 @@ pipeline {
     agent any
     
     tools {
-        nodejs 'Node20' // Mantenemos tu versión funcional
+        nodejs 'Node20'
     }
     
     environment {
-        SONAR_TOKEN = credentials('sonar-token') [cite: 342]
+        SONAR_TOKEN = credentials('sonar-token')
     }
     
     stages {
         stage('Limpiar e Instalar Dependencias') {
             steps {
-                // Al correr en el contenedor Linux de Jenkins, rm -rf funciona perfecto
-                sh 'rm -rf node_modules package-lock.json' [cite: 347]
-                sh 'npm install' [cite: 348]
+                sh 'rm -rf node_modules package-lock.json'
+                sh 'npm install'
             }
         }
         
         stage('Auditoría de Seguridad') {
             steps {
-                sh 'npm audit --audit-level=moderate || true' [cite: 353]
+                sh 'npm audit --audit-level=moderate || true'
             }
         }
         
         stage('Ejecutar Linter') {
             steps {
-                sh 'npm run lint || true' [cite: 358]
+                sh 'npm run lint || true'
             }
         }
         
         stage('Pruebas con Cobertura') {
             steps {
                 script {
-                    def exitCode = sh(script: 'npm run test', returnStatus: true) [cite: 364]
-                    if (exitCode != 0) { [cite: 365]
-                        currentBuild.result = 'UNSTABLE' [cite: 366]
-                        echo "Las pruebas fallaron. El build se marca como inestable." [cite: 367]
+                    def exitCode = sh(script: 'npm run test', returnStatus: true)
+                    if (exitCode != 0) {
+                        currentBuild.result = 'UNSTABLE'
+                        echo "Las pruebas fallaron. El build se marca como inestable."
                     }
                 }
             }
             post {
                 always {
                     script {
-                        if (fileExists('junit.xml')) { [cite: 374]
-                            junit 'junit.xml' [cite: 375]
+                        if (fileExists('junit.xml')) {
+                            junit 'junit.xml'
                         }
                     }
                 }
@@ -53,10 +52,9 @@ pipeline {
         
         stage('Análisis SonarQube') {
             steps {
-                withSonarQubeEnv('SonarQube') { [cite: 383]
+                withSonarQubeEnv('SonarQube') {
                     script {
-                        def scannerHome = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation' [cite: 385]
-                        // Mantenemos la corrección de seguridad
+                        def scannerHome = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                         sh "${scannerHome}/bin/sonar-scanner -Dsonar.token=\$SONAR_TOKEN"
                     }
                 }
@@ -65,29 +63,28 @@ pipeline {
         
         stage('Quality Gate') {
             steps {
-                timeout(time: 1, unit: 'HOURS') { [cite: 393]
-                    waitForQualityGate abortPipeline: true [cite: 394]
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
         
         stage('Build (Exportar Web)') {
             steps {
-                // Genera la carpeta dist con la versión web de tu app React Native
-                sh 'npm run build' [cite: 400]
+                sh 'npm run build'
             }
         }
         
         stage('Archivar Artefactos') {
             steps {
-                archiveArtifacts artifacts: 'dist/**', fingerprint: true [cite: 405]
+                archiveArtifacts artifacts: 'dist/**', fingerprint: true
             }
         }
     }
     
     post {
         always {
-            cleanWs() [cite: 411]
+            cleanWs()
         }
     }
 }
